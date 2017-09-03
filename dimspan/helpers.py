@@ -31,18 +31,30 @@ def noisify(numpyMatrix, magnitude):
 def fourthOrderDerivative(numpyMatrix, dt, dimensions):
   numDer = np.copy(numpyMatrix)
 
-  for r, c = range(numDer.shape):
-    if r < 2 or r >= numDer.shape[0] - 2:
-      continue
+  for r in range(numDer.shape[0]):
+    for c in range(numDer.shape[1]):
+      if r < 2 or r >= numDer.shape[0] - 2:
+        continue
 
-    if c >= dimensions:
-      return numDer
+      if c >= dimensions:
+        return numDer
 
-    currentAppx = (1 / (12 * dt)) * (-numDer[r+2][c] + 8*numDer[r+1][c] - 8 - numDer[r-1][c] + numDer[r-2][c])
-    numDer[i][j] = currentAppx
+      currentAppx = (1 / (12 * dt)) * (-numDer[r+2][c] + 8*numDer[r+1][c] - 8 - numDer[r-1][c] + numDer[r-2][c])
+      numDer[i][j] = currentAppx
 
   return numDer
 
 # make henkel matrix
 def henkelify(numpyArray, delta):
   "morphs single dimension input array into a matrix with delta columns"
+
+  length = numpyArray.shape[0]
+  rowCount = length - delta + 1
+  henkeled = np.zeros((rowCount, delta))
+
+  for row in range(henkeled.shape[0]):
+    start = row
+    end = row + delta
+    henkeled[row] = numpyArray[start:end]
+  
+  return henkeled
