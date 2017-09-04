@@ -19,7 +19,7 @@ def poolData(inputData, variableCount, polyorder, usesine):
   colIdx += 1
   
   for i in range(variableCount):
-    theta[:,colIdx] = inputData[:, i]
+    theta[:, colIdx] = inputData[:, i]
     colIdx += 1
 
   if polyorder>=2:
