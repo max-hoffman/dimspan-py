@@ -15,7 +15,7 @@ lorenzData = lorenz(10, 8/3, 28, .001, 100, 10000, 3)
 noisify(lorenzData, 1)
 print "original data shape", lorenzData.shape
 plt.plot(lorenzData[:, 0], lorenzData[:, 1], 'r-')
-pylab.show()
+# pylab.show()
 
 # reconstruct lorenz data from single time series
 henkeledLorenz = henkelify(lorenzData[:, 0], 10)
@@ -23,7 +23,7 @@ U, s, V = svd(henkeledLorenz, full_matrices=False)
 print "U shape", U.shape
 print s
 plt.plot(U[:,0], U[:, 1], 'r-')
-pylab.show()
+# pylab.show()
 
 # make and normalize theta
 theta = poolData(U, 3, 3, False)
@@ -50,5 +50,7 @@ print "rank", rank
 print "s", s
 raw_input("Press any key to : sparsify xi...")
 
-xi = sparsify(theta, dV, 100, 3)
+xi[:, 0] = sparsify(theta, dV[:, 0], .01, 1)
+xi[:, 1] = sparsify(theta, dV[:, 1], .2, 1)
+xi[:, 2] = sparsify(theta, dV[:, 2], 2, 1)
 print "optimize xi", xi
