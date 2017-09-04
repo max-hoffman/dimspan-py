@@ -16,7 +16,7 @@ def lorenz(sigma, beta, rho, timeStart, timeStop, numberOfPoints, dimensions):
 
   lorenzVals, infodict = integrate.odeint(lorenzeODE, initialCond, time, full_output=1)
   print infodict['message']
-  print lorenzVals
+  # print lorenzVals
 
   return lorenzVals[:, :dimensions]
 
@@ -28,19 +28,17 @@ def noisify(numpyMatrix, magnitude):
     val += np.random.rand()
 
 # 4th order derivative function
-def fourthOrderDerivative(numpyMatrix, dt, dimensions):
-  numDer = np.copy(numpyMatrix)
+def fourthOrderDerivative(inputData, dt, dimensions):
+  numDer = np.zeros((inputData.shape[0], dimensions))
 
-  for r in range(numDer.shape[0]):
-    for c in range(numDer.shape[1]):
+  for c in range(dimensions):
+    for r in range(numDer.shape[0]):
       if r < 2 or r >= numDer.shape[0] - 2:
         continue
 
-      if c >= dimensions:
-        return numDer
-
-      currentAppx = (1 / (12 * dt)) * (-numDer[r+2][c] + 8*numDer[r+1][c] - 8 - numDer[r-1][c] + numDer[r-2][c])
-      numDer[i][j] = currentAppx
+      currentAppx = (1 / (12 * dt)) * (-inputData[r+2][c] + 8*inputData[r+1][c] - 8*inputData[r-1][c] + inputData[r-2][c])
+      # print currentAppx
+      numDer[r][c] = currentAppx
 
   return numDer
 
@@ -58,3 +56,14 @@ def henkelify(numpyArray, delta):
     henkeled[row] = numpyArray[start:end]
   
   return henkeled
+
+def normalize(inputData, dimensions):
+  norms = np.zeros(dimensions)
+  normalizedData = np.copy(inputData)
+
+  for dim in range(dimensions):
+    newNorm = np.linalg.norm(inputData[:,dim], ord=2) / len(inputData)
+    normalizedData[:, dim] = normalizedData[:, dim] / newNorm
+    norms[dim] = newNorm
+
+  return normalizedData, norms
