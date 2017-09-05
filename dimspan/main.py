@@ -15,7 +15,8 @@ lorenzData = lorenz(10, 8/3, 28, .001, 100, 10000, 3)
 noisify(lorenzData, 1)
 print "original data shape", lorenzData.shape
 plt.plot(lorenzData[:, 0], lorenzData[:, 1], 'r-')
-# pylab.show()
+print "Exit plot window to continue..."
+pylab.show()
 
 # reconstruct lorenz data from single time series
 henkeledLorenz = henkelify(lorenzData[:, 0], 10)
@@ -23,10 +24,11 @@ U, s, V = svd(henkeledLorenz, full_matrices=False)
 print "U shape", U.shape
 print s
 plt.plot(U[:,0], U[:, 1], 'r-')
-# pylab.show()
+print "Exit plot window to continue..."
+pylab.show()
 
 # make and normalize theta
-theta = poolData(U, 3, 3, False)
+theta = poolData(U, 3, 3 , False)
 print "pre-normalized theta", theta
 theta, norms = normalize(theta, 3)
 print "norms", norms
@@ -36,7 +38,7 @@ print "normalized theta", theta
 raw_input("Press any key to : compute derivatives...")
 
 # compute derivatives
-dV = fourthOrderDerivative(U, .001, 3)
+dV = fourthOrderDerivative(U, .0001, 3)
 print "dV shape: ", dV.shape
 print "dV", dV
 raw_input("Press any key to : test least-squares step...")
