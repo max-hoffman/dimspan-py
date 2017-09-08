@@ -1,74 +1,86 @@
 import numpy as np
+from math import factorial
 
-def poolData(inputArray, columnsToPool, polyorder, usesine):
+def poolData(inputData, variableCount, polyorder, usesine):
   """creates "theta" matrix of all possible linear combinations
   of input array up to the polynomial order indicated
   """
 
-  rowCount = inputArray.shape[0]
-  theta = np.zeros(rowCount,1+columnsToPool+(columnsToPool*(columnsToPool+1)/2)+(columnsToPool*(columnsToPool+1)*(columnsToPool+2)/(2*3))+11)
+  rowCount = inputData.shape[0]
+  colCount = sumOfComboWithReplacement(polyorder, variableCount)
+  if usesine:
+    harmonicCount = 10
+    colCount += harmonicCount * 2 * variableCount 
+
+  theta = np.zeros((rowCount,colCount))
 
   colIdx = 0
-  # % poly order 0
-  theta[:,colIdx] = np.ones((theta.shape[0], 1))
+  theta[:,colIdx] = np.ones(theta.shape[0])
   colIdx += 1
   
-  # % poly order 1
-  for i in range(columnsToPool):
-      theta[:,colIdx] = inputArray[:,i]
-      colIdx += 1
-
+  for i in range(variableCount):
+    theta[:, colIdx] = inputData[:, i]
+    colIdx += 1
 
   if polyorder>=2:
-      for i in range(columnsToPool):
-          for j in range(i, columnsToPool):
-              theta[:,colIdx] = np.multiple(inputArray[:,i], inputArray[:,j])
+    for i in range(variableCount):
+      for j in range(i, variableCount):
+        theta[:,colIdx] = recursiveMultiply(inputData, [i, j])
+        colIdx += 1
+
+  if polyorder>=3:
+    for i in range(variableCount):
+        for j in range(i, variableCount):
+          for k in range(j, variableCount):
+            theta[:,colIdx] = recursiveMultiply(inputData, [i, j, k])
+            colIdx += 1
+
+  if polyorder>=4:
+    for i in range(variableCount):
+      for j in range(i, variableCount):
+        for k in range(j, variableCount):
+          for l in range(k, variableCount):
+            val = recursiveMultiply(inputData, [i, j, k, l])
+            theta[:,colIdx] = val
+            colIdx += 1
+
+  if polyorder>=5:
+    for i in range(variableCount):
+      for j in range(i, variableCount):
+        for k in range(j, variableCount):
+          for l in range(k, variableCount):
+            for m in range(l, variableCount):
+              theta[:,colIdx] = recursiveMultiply(inputData, [i, j, k, l, m])
               colIdx += 1
 
-# if(polyorder>=3)
-#     % poly order 3
-#     for i in range(columnsToPool):
-#         for j in range(i, columnsToPool):
-#             for k=j:nVars
-#                 yout(:,colIdx) = inputArray(:,i).*inputArray(:,j).*inputArray(:,k);
-#                 colIdx += 1;
-#             end
-#         end
-#     end
-# end
+  if usesine:
+    for k in range(1, 11):
+      sinedVals = np.sin(inputData[:, :variableCount] * k)
+      theta[:, colIdx:colIdx+variableCount] = sinedVals
+      colIdx += variableCount
 
-# if(polyorder>=4)
-#     % poly order 4
-#     for i in range(columnsToPool):
-#         for j in range(i, columnsToPool):
-#             for k=j:nVars
-#                 for l=k:nVars
-#                     yout(:,colIdx) = inputArray(:,i).*inputArray(:,j).*inputArray(:,k).*inputArray(:,l);
-#                     colIdx += 1;
-#                 end
-#             end
-#         end
-#     end
-# end
+      cosedVals = np.cos(inputData[:, :variableCount] * k)
+      theta[:, colIdx:colIdx+variableCount] = cosedVals
+      colIdx += variableCount
+  return theta
 
-# if(polyorder>=5)
-#     % poly order 5
-#     for i in range(columnsToPool):
-#         for j in range(i, columnsToPool):
-#             for k=j:nVars
-#                 for l=k:nVars
-#                     for m=l:nVars
-#                         yout(:,ind) = inputArray(:,i).*inputArray(:,j).*inputArray(:,k).*inputArray(:,l).*inputArray(:,m);
-#                         ind = ind+1;
-#                     end
-#                 end
-#             end
-#         end
-#     end
-# end
+def recursiveMultiply(inputData, indices):
+  def innerRecurse(inputVectors, accumulated):
+    if len(inputVectors) > 0:
+      return innerRecurse(inputVectors[1:], np.multiply(accumulated, inputVectors[0]))
+    return accumulated
 
-# if(usesine)
-#     for k=1:10;
-#         yout = [yout sin(k*inputArray) cos(k*inputArray)];
-#     end
-# end
+  vectors = np.zeros((len(indices), inputData.shape[0]))
+
+  for i in range(len(indices)):
+    vectors[i] = inputData[:, indices[i]]
+
+  startVec = np.ones(inputData[:, i].shape[0])
+
+  return innerRecurse(vectors, startVec)
+
+def sumOfComboWithReplacement(total, options):
+  count = 1
+  for i in range(1, total+1):
+    count += factorial(options+i-1) / (factorial(i) * factorial(options-1))
+  return count
