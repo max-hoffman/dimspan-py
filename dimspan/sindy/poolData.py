@@ -12,7 +12,7 @@ def poolData(inputData, variableCount, polyorder, usesine):
     harmonicCount = 10
     colCount += harmonicCount * 2 * variableCount 
 
-  theta = np.zeros((rowCount,colCount))
+  theta = np.zeros((int(rowCount),int(colCount)))
 
   colIdx = 0
   theta[:,colIdx] = np.ones(theta.shape[0])

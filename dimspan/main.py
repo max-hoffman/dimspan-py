@@ -12,9 +12,9 @@ import sindy
 lorenzData = sindy.lorenz(10, 8/3, 28, .001, 100, 10000, 3)
 #noisify(lorenzData, 1)
 print( "original data shape", lorenzData.shape)
-plt.plot(lorenzData[:, 0], lorenzData[:, 1], 'r-')
+# plt.plot(lorenzData[:, 0], lorenzData[:, 1], 'r-')
 print( "Exit plot window to continue...")
-pylab.show()
+# pylab.show()
 
 # reconstruct lorenz data from single time series
 henkeledLorenz = sindy.henkelify(lorenzData[:, 0], 10)
@@ -24,9 +24,9 @@ U, s, V = svd(henkeledLorenz, full_matrices=False)
 V=V.conj().T 
 print( "V shape", V.shape)
 print( s)
-plt.plot(V[:,0], V[:, 1], 'r-')
+# plt.plot(V[:,0], V[:, 1], 'r-')
 print( "Exit plot window to continue...")
-pylab.show()
+# pylab.show()
 #raw_input("Press any key to : compute derivatives...")
 
 # compute derivatives
