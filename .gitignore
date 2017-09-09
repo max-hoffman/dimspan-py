@@ -1,3 +1,4 @@
-dimpan/.vscode/
+dimpan
+/.vscode/
 dimspan/*.pyc
 dimspan/*/*.pyc
