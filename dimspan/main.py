@@ -68,3 +68,8 @@ xi[:, 1] = xi[:, 1] / norms[1]
 xi[:, 2] = xi[:, 2] / norms[2]
 
 print( "optimize xi", xi)
+
+constraints = [['a', 'b'], ['a', 'b', 'ac'], ['ab', 'c']]
+
+polyorder = 3
+xi= sindy.constrainedSparsify(constraints, polyorder, numModes, theta, dV, .01, 3)
