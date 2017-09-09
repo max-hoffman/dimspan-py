@@ -33,7 +33,10 @@ def _marshalXi(constraints, order, modes):
   return xi.T
 
 def constrainedSparsify(constraints, polyorder, modes, theta, dX, _lambda, dimensions):
-  for 
+
+  matches = _constraintMatches(len(constraints), 4)
+  print("matches", matches)
+
   constrainedXi = _marshalXi(constraints, polyorder, modes)
   xi, _, _, _ = np.linalg.lstsq(theta, dX)
   
@@ -72,20 +75,39 @@ def _constraintMatches(fixed, order):
   if fixed > order:
     return
 
-  remaining = list(range(fixed))
+  remaining = list(range(order+1))
   current = []
   matches = []
 
   def innerRecurse(current, remaining):
-    if len(current) == order:
-      matches.push(current)
-      return
-    for idx in remaining:
-      innerRecurse(current.push(remaining[0]), remianing[1:])
+    
+    if current:
+      if len(current) == fixed:
+        matches.append(current)
+        return
+      
+    for idx in range(len(remaining)):
+      newCopy = list(current)
+      newCopy.append(remaining[idx])
+      newRemaining = list(remaining[0:idx])  + list(remaining[idx+1:])
+      
+      if not current:
+        newCopy = [remaining[idx]]
+      
+      print("recurse", newCopy, newRemaining)
+      innerRecurse(newCopy, newRemaining)
 
-  innerRecurse(current, remaining)
-  return matches
+  innerRecurse([], remaining)
 
+  def duplicate(arr):
+    copy = list(arr)
+    copy.sort()
+    for idx in range(1, len(copy)):
+      if copy[idx] == copy[idx - 1]:
+        return False
+    return True
+    
+  return list(filter((lambda arr: duplicate(arr)), matches))
 
 
 
