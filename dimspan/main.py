@@ -69,7 +69,9 @@ xi[:, 2] = xi[:, 2] / norms[2]
 
 print( "optimize xi", xi)
 
-constraints = [['a', 'b'], ['a', 'b', 'ac'], ['ab', 'c']]
+constraints = [['a', 'b'], ['a', 'b', 'ac']]
 
 polyorder = 3
-xi= sindy.constrainedSparsify(constraints, polyorder, numModes, theta, dV, .01, 3)
+xi, residual = sindy.constrainedSparsify(constraints, polyorder, numModes, theta, dV, .01, 3)
+print("contstrained xi with lowest residual", xi)
+print("lowest constrained residual", residual)

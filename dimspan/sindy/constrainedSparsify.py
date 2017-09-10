@@ -15,10 +15,11 @@ def constrainedSparsify(constraints, polyorder, modes, theta, dX, _lambda, dimen
   print("matches", matches)
 
   constrainedXi = _marshalXi(constraints, polyorder, modes)
+  print("constrained xi", constrainedXi)
 
   xi, residual, _, _ = np.linalg.lstsq(theta, dX)
-  lowestResidual = np.sum(lowestResidual)
-  bestXi = list(xi)
+  lowestResidual = np.sum(residual)
+  bestXi = np.copy(xi)
 
   for toFix in matches:
     xi, _, _, _ = np.linalg.lstsq(theta, dX)
@@ -30,13 +31,14 @@ def constrainedSparsify(constraints, polyorder, modes, theta, dX, _lambda, dimen
       xi = _regularize(xi, _lambda)
       xi, residual = _iterateRegression(xi, theta, dX, _lambda, dimensions)
     
-      currentResidual = np.sum(residual)
-
-      if currentResidual < lowestResidual:
+    currentResidual = np.sum(residual)
+    if currentResidual < lowestResidual:
         lowestResidual = currentResidual
-        bestXi = list(xi)
+        bestXi = np.copy(xi)
 
-    return bestXi, lowestResidual
+    print("constrained xi after optimization", xi)
+    print("guess, residual", toFix, currentResidual)
+  return bestXi, lowestResidual
 
 def _regularize(xi, _lambda):
   "clips small elements (to zero)"
@@ -129,7 +131,7 @@ def _constraintMatches(fixed, order):
   if fixed > order:
     return
 
-  remaining = list(range(order+1))
+  remaining = list(range(order))
   current = []
   matches = []
 
