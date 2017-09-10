@@ -21,11 +21,13 @@ def constrainedSparsify(constraints, polyorder, modes, theta, dX, _lambda, dimen
   lowestResidual = np.sum(residual)
   bestXi = np.copy(xi)
 
-  for toFix in matches:
+  for colsToFix in matches:
     xi, _, _, _ = np.linalg.lstsq(theta, dX)
 
     # TODO : make sure this isn't jenky
-    xi[:, toFix] = constrainedXi
+    # xi[:, colsToFix] = constrainedXi
+    for i in range(len(colsToFix)):
+      xi[:, colsToFix[i]] = constrainedXi[:, i]
     
     for i in range(10):
       xi = _regularize(xi, _lambda)
@@ -37,7 +39,7 @@ def constrainedSparsify(constraints, polyorder, modes, theta, dX, _lambda, dimen
         bestXi = np.copy(xi)
 
     print("constrained xi after optimization", xi)
-    print("guess, residual", toFix, currentResidual)
+    print("guess, residual", colsToFix, currentResidual)
   return bestXi, lowestResidual
 
 def _regularize(xi, _lambda):
@@ -117,7 +119,6 @@ def _constraintMatches(fixed, order):
       if not current:
         newCopy = [remaining[idx]]
       
-      print("recurse", newCopy, newRemaining)
       innerRecurse(newCopy, newRemaining)
 
   def duplicate(arr):
