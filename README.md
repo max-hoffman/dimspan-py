@@ -7,11 +7,11 @@ The makefile and setup.py's are still boilerplate, need to fix.
 3. go to the current folder
 4. build docker image from local directory ("./", and tag with name "dimspan"
 ```
-docker built -t dimspan .
+docker build -t dimspan .
 ```
 5. run the docker image "dimspan" interactively (so you can see console output), and remove the container upon completion
 ```
-docker run -it --rm dimspan
+docker run --rm dimspan
 ```
 
 ## local dev with python
